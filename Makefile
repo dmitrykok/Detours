@@ -17,8 +17,6 @@ all:
     @$(MAKE) /NOLOGO /$(MAKEFLAGS)
     cd "$(MAKEDIR)\samples"
     @$(MAKE) /NOLOGO /$(MAKEFLAGS)
-    cd "$(MAKEDIR)\tests"
-    @$(MAKE) /NOLOGO /$(MAKEFLAGS)
     @if exist "$(MAKEDIR)\bugs\makefile" cd "$(MAKEDIR)\bugs" && $(MAKE) /NOLOGO /$(MAKEFLAGS)
     cd "$(MAKEDIR)"
 
@@ -29,8 +27,6 @@ clean:
     @$(MAKE) /NOLOGO /$(MAKEFLAGS) clean
     cd "$(MAKEDIR)\samples"
     @$(MAKE) /NOLOGO /$(MAKEFLAGS) clean
-    cd "$(MAKEDIR)\tests"
-    @$(MAKE) /NOLOGO /$(MAKEFLAGS) clean
     @if exist "$(MAKEDIR)\bugs\makefile" cd "$(MAKEDIR)\bugs" && $(MAKE) /NOLOGO /$(MAKEFLAGS) clean
     cd "$(MAKEDIR)"
 
@@ -40,8 +36,6 @@ realclean: clean
     cd "$(MAKEDIR)\src"
     @$(MAKE) /NOLOGO /$(MAKEFLAGS) realclean
     cd "$(MAKEDIR)\samples"
-    @$(MAKE) /NOLOGO /$(MAKEFLAGS) realclean
-    cd "$(MAKEDIR)\tests"
     @$(MAKE) /NOLOGO /$(MAKEFLAGS) realclean
     @if exist "$(MAKEDIR)\bugs\makefile" cd "$(MAKEDIR)\bugs" && $(MAKE) /NOLOGO /$(MAKEFLAGS) realclean
     cd "$(MAKEDIR)"
@@ -54,10 +48,6 @@ realclean: clean
     -del /q /f /s *~ 2>nul
 
 test:
-    cd "$(MAKEDIR)\samples"
-    @$(MAKE) /NOLOGO /$(MAKEFLAGS) test
-    cd "$(MAKEDIR)\tests"
-    @$(MAKE) /NOLOGO /$(MAKEFLAGS) test
     cd "$(MAKEDIR)"
 
 ################################################################# End of File.

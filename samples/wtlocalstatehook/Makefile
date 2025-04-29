@@ -9,7 +9,7 @@
 
 !include ..\common.mak
 
-CFLAGS=$(CFLAGS) /std:c++20 /WX-
+CFLAGS=$(CFLAGS) /std:c++20 /EHsc /WX-
 
 LIBS=$(LIBS) kernel32.lib ntdll.lib shell32.lib
 

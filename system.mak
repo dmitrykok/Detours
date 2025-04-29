@@ -107,40 +107,42 @@ DETOURS_OPTION_BITS=64
 ##############################################################################
 ##
 !IF "$(DETOURS_CONFIG)" == "Debug"
+!message  Detours build configuration: $(DETOURS_CONFIG) | $(DETOURS_BITS)-bit
 DETOURS_DEBUG=1
 !ELSE
+!message  Detours build configuration: $(DETOURS_CONFIG) | $(DETOURS_BITS)-bit
 DETOURS_DEBUG=0
 !ENDIF
 
 INCD = $(ROOT)\include
-LIBD = $(ROOT)\lib.$(DETOURS_TARGET_PROCESSOR)$(DETOURS_CONFIG)
-BIND = $(ROOT)\bin.$(DETOURS_TARGET_PROCESSOR)$(DETOURS_CONFIG)
-OBJD = obj.$(DETOURS_TARGET_PROCESSOR)$(DETOURS_CONFIG)
+LIBD = $(ROOT)\$(DETOURS_CONFIG)\lib.$(DETOURS_TARGET_PROCESSOR)
+BIND = $(ROOT)\$(DETOURS_CONFIG)\bin.$(DETOURS_TARGET_PROCESSOR)
+OBJD = $(DETOURS_CONFIG)\obj.$(DETOURS_TARGET_PROCESSOR)
 !IF "$(DETOURS_OPTION_PROCESSOR)" != ""
-OPTD = $(ROOT)\bin.$(DETOURS_OPTION_PROCESSOR)$(DETOURS_CONFIG)
+OPTD = $(ROOT)\$(DETOURS_CONFIG)\bin.$(DETOURS_OPTION_PROCESSOR)
 !ENDIF
 
 INCDS = $(ROOT)\include
 
 LIBDS = \
-        $(ROOT)\lib.x86$(DETOURS_CONFIG) \
-        $(ROOT)\lib.x64$(DETOURS_CONFIG) \
-        $(ROOT)\lib.ia64$(DETOURS_CONFIG) \
-        $(ROOT)\lib.arm$(DETOURS_CONFIG) \
-        $(ROOT)\lib.arm64$(DETOURS_CONFIG) \
+        $(ROOT)\$(DETOURS_CONFIG)\lib.x86 \
+        $(ROOT)\$(DETOURS_CONFIG)\lib.x64 \
+        $(ROOT)\$(DETOURS_CONFIG)\lib.ia64 \
+        $(ROOT)\$(DETOURS_CONFIG)\lib.arm \
+        $(ROOT)\$(DETOURS_CONFIG)\lib.arm64 \
 
 BINDS = \
-        $(ROOT)\bin.x86$(DETOURS_CONFIG) \
-        $(ROOT)\bin.x64$(DETOURS_CONFIG) \
-        $(ROOT)\bin.ia64$(DETOURS_CONFIG) \
-        $(ROOT)\bin.arm$(DETOURS_CONFIG) \
-        $(ROOT)\bin.arm64$(DETOURS_CONFIG) \
+        $(ROOT)\$(DETOURS_CONFIG)\bin.x86 \
+        $(ROOT)\$(DETOURS_CONFIG)\bin.x64 \
+        $(ROOT)\$(DETOURS_CONFIG)\bin.ia64 \
+        $(ROOT)\$(DETOURS_CONFIG)\bin.arm \
+        $(ROOT)\$(DETOURS_CONFIG)\bin.arm64 \
 
 OBJDS = \
-        obj.x86$(DETOURS_CONFIG) \
-        obj.x64$(DETOURS_CONFIG) \
-        obj.ia64$(DETOURS_CONFIG) \
-        obj.arm$(DETOURS_CONFIG) \
-        obj.arm64$(DETOURS_CONFIG) \
+        obj.x86 \
+        obj.x64 \
+        obj.ia64 \
+        obj.arm \
+        obj.arm64 \
 
 ##############################################################################
