@@ -593,6 +593,7 @@ nmake</Command>
     <ClCompile Include="..\samples\tryman\tryman.cpp" />
     <ClCompile Include="..\samples\tryman\tstman.cpp" />
     <ClCompile Include="..\samples\withdll\withdll.cpp" />
+    <ClCompile Include="..\samples\wtlocalstatehook\WTLocalStateHook.cpp" />
     <ClCompile Include="..\src\creatwth.cpp" />
     <ClCompile Include="..\src\detours.cpp" />
     <ClCompile Include="..\src\disasm.cpp" />
@@ -663,6 +664,7 @@ nmake</Command>
     <None Include="..\samples\tryman\Makefile" />
     <None Include="..\samples\tryman\managed.cs" />
     <None Include="..\samples\withdll\Makefile" />
+    <None Include="..\samples\wtlocalstatehook\Makefile" />
     <None Include="..\system.mak" />
   </ItemGroup>
   <ItemGroup>
@@ -698,6 +700,7 @@ nmake</Command>
     <ResourceCompile Include="..\samples\tracessl\trcssl.rc" />
     <ResourceCompile Include="..\samples\tracetcp\trctcp.rc" />
     <ResourceCompile Include="..\samples\tryman\tstman.rc" />
+    <ResourceCompile Include="..\samples\wtlocalstatehook\WTLocalStateHook.rc" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="..\samples\cping\iping.idl" />

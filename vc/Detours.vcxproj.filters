@@ -103,6 +103,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{E980771B-0BA5-4B01-947A-B99D33E31E89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="samples\wtlocalstatehook">
+      <UniqueIdentifier>{017b5f53-6e15-4e4b-8e54-2610ccb69ba6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\uimports.cpp">
@@ -348,6 +351,9 @@
     <ClCompile Include="..\samples\disas\x86.cpp">
       <Filter>samples\disas</Filter>
     </ClCompile>
+    <ClCompile Include="..\samples\wtlocalstatehook\WTLocalStateHook.cpp">
+      <Filter>samples\wtlocalstatehook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\detours.h">
@@ -504,6 +510,9 @@
     <None Include="..\Makefile" />
     <None Include="..\README.md" />
     <None Include="..\system.mak" />
+    <None Include="..\samples\wtlocalstatehook\Makefile">
+      <Filter>samples\wtlocalstatehook</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\samples\slept\NORMAL_IA64.TXT">
@@ -595,6 +604,9 @@
     </ResourceCompile>
     <ResourceCompile Include="..\samples\comeasy\wrotei.rc">
       <Filter>samples\comeasy</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="..\samples\wtlocalstatehook\WTLocalStateHook.rc">
+      <Filter>samples\wtlocalstatehook</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
