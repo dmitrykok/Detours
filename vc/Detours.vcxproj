@@ -289,6 +289,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -304,6 +306,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMDd|ARM64EC'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -319,6 +323,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64EC'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -334,6 +340,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMDd|ARM'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -349,6 +357,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -364,6 +374,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMDd|ARM64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -379,6 +391,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -394,6 +408,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|x64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -409,6 +425,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -424,6 +442,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|ARM64EC'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -439,6 +459,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64EC'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -454,6 +476,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|ARM'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -469,6 +493,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -484,6 +510,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMDd|Win32'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -499,6 +527,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -514,6 +544,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Debug
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -529,6 +561,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -544,6 +578,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|ARM64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -559,6 +595,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <NMakeBuildCommandLine>SET DETOURS_TARGET_PROCESSOR=$(Platform)
@@ -574,6 +612,8 @@ nmake</NMakeReBuildCommandLine>
 SET DETOURS_CONFIG=Release
 cd ..
 nmake clean</NMakeCleanCommandLine>
+    <OutDir>$(SolutionDir)WTLayoutManager\bin\$(Platform)\$(Configuration)\net9.0-windows10.0.26100.0\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugMDd|Win32'">
     <ClCompile>
