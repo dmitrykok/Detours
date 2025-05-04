@@ -1,4 +1,4 @@
-##############################################################################
+﻿##############################################################################
 ##
 ##  Utility to trace HeapAlloc APIs.
 ##
@@ -8,6 +8,8 @@
 ##
 
 !include ..\common.mak
+
+DLL_OUT = $(ROOT)\..\..\WTLayoutManager\bin\$(DETOURS_TARGET_PROCESSOR)\$(DETOURS_CONFIG)\net9.0-windows10.0.26100.0
 
 CFLAGS=$(CFLAGS) /std:c++20 /EHsc /WX-
 
@@ -44,6 +46,12 @@ $(BIND)\WTLocalStateHook$(DETOURS_BITS).dll : $(OBJD)\WTLocalStateHook.obj $(OBJ
         /link $(LINKFLAGS) /subsystem:console \
         /export:DetourFinishHelperProcess,@1,NONAME \
         $(LIBS)
+
+    @rem ── make sure the VS output folder exists
+    @if not exist "$(DLL_OUT)" mkdir "$(DLL_OUT)"
+
+    @rem ── copy only if the DLL changed (/Y = overwrite, /D = newer only)
+    copy /Y /D $@  "$(DLL_OUT)\"
 
 $(OBJD)\WTLocalStateHook$(DETOURS_BITS).bsc : $(OBJD)\WTLocalStateHook.obj
     bscmake /v /n /o $@ $(OBJD)\WTLocalStateHook.sbr
