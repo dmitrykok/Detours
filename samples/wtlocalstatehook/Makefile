@@ -13,7 +13,7 @@ DLL_OUT = $(ROOT)\..\..\WTLayoutManager\bin\$(DETOURS_TARGET_PROCESSOR)\$(DETOUR
 
 CFLAGS=$(CFLAGS) /std:c++20 /EHsc /WX-
 
-LIBS=$(LIBS) kernel32.lib ntdll.lib shell32.lib
+LIBS=$(LIBS) kernel32.lib ntdll.lib shell32.lib User32.lib
 
 all: dirs \
     $(BIND)\WTLocalStateHook$(DETOURS_BITS).dll \

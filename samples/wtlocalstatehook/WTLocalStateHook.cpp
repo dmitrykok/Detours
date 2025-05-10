@@ -7,16 +7,20 @@
 #include <windows.h>
 #include <shlobj.h>          // SHGetFolderPathW
 #include <winternl.h>        // NtCreateFile, UNICODE_STRING
-#include <detours.h>
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <condition_variable>
+#include "detours.h"
 
 //--------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------
 static std::wstring g_defaultPrefix;   // canonical LocalState path
 static std::wstring g_newPrefix;       // replacement root (profile)
+static std::once_flag g_prefixInit;
+static std::wstring g_cachedName;   // e.g. "Windows Terminal Admin abcd1234…"
+static std::once_flag g_nameInit;
 
 // Original function pointers ------------------------------------------------
 extern "C" {
@@ -72,7 +76,40 @@ extern "C" {
             LPVOID,
             LPVOID)
         = ReplaceFileW;
+
+    static HANDLE(WINAPI* Real_CreateMutexW)(
+            LPSECURITY_ATTRIBUTES,
+            BOOL,
+            LPCWSTR)
+        = CreateMutexW;
+
+    static HWND(WINAPI* Real_FindWindowW)(
+            LPCWSTR,
+            LPCWSTR)
+        = FindWindowW;
 }
+
+// ---------------------------------------------------------------------------
+//  Hash helper: same 64-bit / 32-bit FNV-1a that til::hash uses
+// ---------------------------------------------------------------------------
+#ifdef _WIN64
+static uint64_t fnv1a64(std::wstring_view s)
+{
+    uint64_t h = 0xcbf29ce484222325ull;
+    for (wchar_t ch : s)
+        h = (h ^ static_cast<uint64_t>(ch)) * 0x100000001b3ull;
+    return h;
+}
+#else
+static uint32_t fnv1a32(std::wstring_view s)
+{
+    uint32_t h = 0x811c9dc5ul;
+    for (wchar_t ch : s)
+        h = (h ^ static_cast<uint32_t>(ch)) * 0x01000193ul;
+    return h;
+}
+#endif
+
 using PFN_NtCreateFile = NTSTATUS(NTAPI*)(
     PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PIO_STATUS_BLOCK,
     PLARGE_INTEGER, ULONG, ULONG, ULONG, ULONG, PVOID, ULONG);
@@ -87,19 +124,48 @@ static PathFn Real_GetReleasePath = nullptr;
 //--------------------------------------------------------------------------
 static void InitPrefixes()
 {
-    if (!g_defaultPrefix.empty()) return;          // already cached
+    //if (!g_defaultPrefix.empty()) return;          // already cached
 
     // 1. default LocalState — build it at runtime so the hook works for any user
-    wchar_t localAppData[MAX_PATH];
-    DWORD len = GetEnvironmentVariableW(L"WT_DEFAULT_LOCALSTATE", localAppData, MAX_PATH);
+    wchar_t defaultPrefixData[MAX_PATH];
+    DWORD len = GetEnvironmentVariableW(L"WT_DEFAULT_LOCALSTATE", defaultPrefixData, MAX_PATH);
     if (len > 0 && len < MAX_PATH)
-        g_defaultPrefix.assign(localAppData, len);
+        g_defaultPrefix.assign(defaultPrefixData, len);
 
     // 2. new LocalState root — read once from env var
-    wchar_t buf[MAX_PATH];
-    len = GetEnvironmentVariableW(L"WT_REDIRECT_LOCALSTATE", buf, MAX_PATH);
+    wchar_t newPrefixData[MAX_PATH];
+    len = GetEnvironmentVariableW(L"WT_REDIRECT_LOCALSTATE", newPrefixData, MAX_PATH);
     if (len > 0 && len < MAX_PATH)
-        g_newPrefix.assign(buf, len);
+        g_newPrefix.assign(newPrefixData, len);
+}
+
+// ---------------------------------------------------------------------------
+//  Compute+cache new name (runs exactly once)
+// ---------------------------------------------------------------------------
+static void initWindowClassRewrite(LPCWSTR original)
+{
+    std::wstring env = [] {
+        wchar_t buf[MAX_PATH]; DWORD n = GetEnvironmentVariableW(
+            L"WT_REDIRECT_LOCALSTATE", buf, MAX_PATH);
+        return (n && n < MAX_PATH) ? std::wstring(buf, n) : std::wstring();
+        }();
+    if (env.empty())
+        return;                         // nothing to do
+
+#ifdef _WIN64
+    uint64_t h64 = fnv1a64(env);
+    constexpr wchar_t fmt[] = L" %016llx";
+    wchar_t hashPart[18];               // space + 16 hex + NUL
+    swprintf(hashPart, 18, fmt, h64);
+#else
+    uint64_t h32 = fnv1a32(env);
+    constexpr wchar_t fmt[] = L" %08x";
+    wchar_t hashPart[10];
+    swprintf(hashPart, 10, fmt, static_cast<uint32_t>(h32));
+#endif
+
+    g_cachedName.assign(original);
+    g_cachedName.append(hashPart);
 }
 
 // Replace beginning of |path| if it starts with the canonical LocalState root
@@ -127,7 +193,8 @@ static HANDLE WINAPI Hook_CreateFileW(LPCWSTR lpFileName,
     DWORD dwFlagsAndAttributes,
     HANDLE hTemplateFile)
 {
-    InitPrefixes();
+    std::call_once(g_prefixInit, InitPrefixes);
+
     std::wstring newName = lpFileName ? RewritePath(lpFileName) : std::wstring();
     return Real_CreateFileW(newName.empty() ? lpFileName : newName.c_str(),
         dwDesiredAccess, dwShareMode, lpSecurityAttributes,
@@ -157,7 +224,8 @@ static HANDLE WINAPI Hook_CreateFileMappingW(
     DWORD dwMaximumSizeLow,
     LPCWSTR lpName)
 {
-    InitPrefixes();
+    std::call_once(g_prefixInit, InitPrefixes);
+
     std::wstring newName = lpName ? RewritePath(lpName) : std::wstring();
     return Real_CreateFileMappingW(hFile, lpFileMappingAttributes, flProtect,
         dwMaximumSizeHigh, dwMaximumSizeLow,
@@ -176,7 +244,7 @@ static NTSTATUS NTAPI Hook_NtCreateFile(PHANDLE            FileHandle,
     PVOID              EaBuffer,
     ULONG              EaLength)
 {
-    InitPrefixes();
+    std::call_once(g_prefixInit, InitPrefixes);
 
     UNICODE_STRING localCopy{};               // buffer lives on our stack
     OBJECT_ATTRIBUTES oaCopy = *ObjectAttributes; // shallow copy
@@ -210,7 +278,7 @@ static std::filesystem::path Hook_GetReleasePath()
 
 static BOOL WINAPI Hook_MoveFileExW(LPCWSTR from, LPCWSTR to, DWORD flags)
 {
-    InitPrefixes();   // reuse your existing logic
+    std::call_once(g_prefixInit, InitPrefixes);
 
     std::wstring src = from ? RewritePath(from) : std::wstring();
     std::wstring dst = to ? RewritePath(to) : std::wstring();
@@ -224,7 +292,7 @@ static BOOL WINAPI Hook_ReplaceFileW(LPCWSTR replaced, LPCWSTR replaceWith,
     LPCWSTR backup, DWORD flags,
     LPVOID, LPVOID)
 {
-    InitPrefixes();
+    std::call_once(g_prefixInit, InitPrefixes);
 
     std::wstring src = replaced ? RewritePath(replaced) : std::wstring();
     std::wstring newf = replaceWith ? RewritePath(replaceWith) : std::wstring();
@@ -234,6 +302,26 @@ static BOOL WINAPI Hook_ReplaceFileW(LPCWSTR replaced, LPCWSTR replaceWith,
         backup,
         flags,
         nullptr, nullptr);
+}
+
+static HANDLE WINAPI Hook_CreateMutexW(LPSECURITY_ATTRIBUTES sa, BOOL own,
+    LPCWSTR name)
+{
+    std::call_once(g_nameInit, initWindowClassRewrite, name);
+
+    LPCWSTR use = g_cachedName.empty() ? name : g_cachedName.c_str();
+    return Real_CreateMutexW(sa, own, use);
+}
+
+static HWND WINAPI Hook_FindWindowW(LPCWSTR cls, LPCWSTR title)
+{
+    std::call_once(g_nameInit, initWindowClassRewrite, cls);
+
+    LPCWSTR use = (!g_cachedName.empty() && cls &&
+        g_cachedName.rfind(cls, 0) == 0)
+        ? g_cachedName.c_str()
+        : cls;
+    return Real_FindWindowW(use, title);
 }
 
 //--------------------------------------------------------------------------
@@ -249,6 +337,8 @@ static void AttachDetours()
     DetourAttach(&(PVOID&)Real_CreateFileMappingW, Hook_CreateFileMappingW);
     DetourAttach(&(PVOID&)Real_MoveFileExW, Hook_MoveFileExW);
     DetourAttach(&(PVOID&)Real_ReplaceFileW, Hook_ReplaceFileW);
+    DetourAttach(&(PVOID&)Real_CreateMutexW, Hook_CreateMutexW);
+    DetourAttach(&(PVOID&)Real_FindWindowW, Hook_FindWindowW);
 
     if (!Real_GetBasePath)
     {
@@ -285,8 +375,10 @@ static void DetachDetours()
     DetourUpdateThread(GetCurrentThread());
     DetourDetach(&(PVOID&)Real_CreateFileW, Hook_CreateFileW);
     DetourDetach(&(PVOID&)Real_CreateFileMappingW, Hook_CreateFileMappingW);
-    DetourAttach(&(PVOID&)Real_MoveFileExW, Hook_MoveFileExW);
-    DetourAttach(&(PVOID&)Real_ReplaceFileW, Hook_ReplaceFileW);
+    DetourDetach(&(PVOID&)Real_MoveFileExW, Hook_MoveFileExW);
+    DetourDetach(&(PVOID&)Real_ReplaceFileW, Hook_ReplaceFileW);
+    DetourDetach(&(PVOID&)Real_CreateMutexW, Hook_CreateMutexW);
+    DetourDetach(&(PVOID&)Real_FindWindowW, Hook_FindWindowW);
     if (Real_GetBasePath)
         DetourDetach(&(PVOID&)Real_GetBasePath, Hook_GetBasePath);
     if (Real_GetReleasePath)
