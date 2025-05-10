@@ -9,6 +9,8 @@
 
 #include "detver.h"
 
+#define VER_PRODUCTVERSION_STR      "5.0.1.3"
+#define VER_PRODUCTVERSION          5,00,01,003
 #define VER_INTERNALNAME_STR        "WTLocalStateHook" DETOURS_STRINGIFY(DETOURS_BITS)
 #define VER_ORIGINALFILENAME_STR    "WTLocalStateHook" DETOURS_STRINGIFY(DETOURS_BITS) ".dll"
 #define VER_FILEDESCRIPTION_STR     "WTLayoutManager Local State Hook"
