@@ -21,6 +21,9 @@ static std::wstring g_newPrefix;       // replacement root (profile)
 static std::once_flag g_prefixInit;
 static std::wstring g_cachedName;   // e.g. "Windows Terminal Admin abcd1234…"
 static std::once_flag g_nameInit;
+static std::wstring g_hookDllPathW;
+static std::string g_hookDllPath;
+static std::once_flag g_hookDllInit;
 
 // Original function pointers ------------------------------------------------
 extern "C" {
@@ -87,6 +90,19 @@ extern "C" {
             LPCWSTR,
             LPCWSTR)
         = FindWindowW;
+
+    static BOOL(WINAPI* Real_CreateProcessW)(
+            LPCWSTR,
+            LPWSTR,
+            LPSECURITY_ATTRIBUTES,
+            LPSECURITY_ATTRIBUTES,
+            BOOL,
+            DWORD,
+            LPVOID,
+            LPCWSTR,
+            LPSTARTUPINFOW,
+            LPPROCESS_INFORMATION)
+        = CreateProcessW;
 }
 
 // ---------------------------------------------------------------------------
@@ -109,6 +125,18 @@ static uint32_t fnv1a32(std::wstring_view s)
     return h;
 }
 #endif
+
+std::string WideToUtf8(const std::wstring& ws)
+{
+    int len = WideCharToMultiByte(CP_UTF8, 0,
+        ws.data(), (int)ws.size(),
+        nullptr, 0, nullptr, nullptr);
+    std::string s(len, 0);
+    WideCharToMultiByte(CP_UTF8, 0,
+        ws.data(), (int)ws.size(),
+        s.data(), len, nullptr, nullptr);
+    return s;
+}
 
 using PFN_NtCreateFile = NTSTATUS(NTAPI*)(
     PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PIO_STATUS_BLOCK,
@@ -166,6 +194,18 @@ static void initWindowClassRewrite(LPCWSTR original)
 
     g_cachedName.assign(original);
     g_cachedName.append(hashPart);
+}
+
+static void InitHookDllPath()
+{
+    //if (!g_defaultPrefix.empty()) return;          // already cached
+
+    // 1. default LocalState — build it at runtime so the hook works for any user
+    wchar_t hookDllPath[MAX_PATH];
+    DWORD len = GetEnvironmentVariableW(L"WT_HOOK_DLL_PATH", hookDllPath, MAX_PATH);
+    if (len > 0 && len < MAX_PATH)
+        g_hookDllPathW.assign(hookDllPath, len);
+        g_hookDllPath = WideToUtf8(g_hookDllPathW);
 }
 
 // Replace beginning of |path| if it starts with the canonical LocalState root
@@ -324,6 +364,30 @@ static HWND WINAPI Hook_FindWindowW(LPCWSTR cls, LPCWSTR title)
     return Real_FindWindowW(use, title);
 }
 
+static BOOL WINAPI Hook_CreateProcessW(
+    LPCWSTR lpAppName, LPWSTR lpCmdLine, LPSECURITY_ATTRIBUTES lpProcAttr,
+    LPSECURITY_ATTRIBUTES lpThreadAttr, BOOL bInherit, DWORD dwFlags,
+    LPVOID lpEnv, LPCWSTR lpCurDir, LPSTARTUPINFOW lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcInfo)
+{
+    std::call_once(g_hookDllInit, InitHookDllPath);
+
+    // Only intercept if launching WindowsTerminal.exe
+    if (lpAppName && wcsstr(lpAppName, L"WindowsTerminal.exe") != nullptr)
+    {
+        // Call DetourCreateProcessWithDllExW instead!
+        BOOL result =  DetourCreateProcessWithDllExW(
+            lpAppName, lpCmdLine, lpProcAttr, lpThreadAttr, bInherit, dwFlags | CREATE_SUSPENDED,
+            lpEnv, lpCurDir, lpStartupInfo, lpProcInfo, g_hookDllPath.c_str(), Real_CreateProcessW);
+
+        result = ResumeThread(lpProcInfo->hThread);
+        return result;
+    }
+    // Otherwise, normal behavior
+    return Real_CreateProcessW(lpAppName, lpCmdLine, lpProcAttr, lpThreadAttr,
+        bInherit, dwFlags, lpEnv, lpCurDir, lpStartupInfo, lpProcInfo);
+}
+
 //--------------------------------------------------------------------------
 // Detour attach / detach
 //--------------------------------------------------------------------------
@@ -339,6 +403,7 @@ static void AttachDetours()
     DetourAttach(&(PVOID&)Real_ReplaceFileW, Hook_ReplaceFileW);
     DetourAttach(&(PVOID&)Real_CreateMutexW, Hook_CreateMutexW);
     DetourAttach(&(PVOID&)Real_FindWindowW, Hook_FindWindowW);
+    DetourAttach(&(PVOID&)Real_CreateProcessW, Hook_CreateProcessW);
 
     if (!Real_GetBasePath)
     {
@@ -379,6 +444,7 @@ static void DetachDetours()
     DetourDetach(&(PVOID&)Real_ReplaceFileW, Hook_ReplaceFileW);
     DetourDetach(&(PVOID&)Real_CreateMutexW, Hook_CreateMutexW);
     DetourDetach(&(PVOID&)Real_FindWindowW, Hook_FindWindowW);
+    DetourDetach(&(PVOID&)Real_CreateProcessW, Hook_CreateProcessW);
     if (Real_GetBasePath)
         DetourDetach(&(PVOID&)Real_GetBasePath, Hook_GetBasePath);
     if (Real_GetReleasePath)
