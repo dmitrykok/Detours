@@ -376,16 +376,17 @@ static BOOL WINAPI Hook_CreateProcessW(
     if (lpAppName && wcsstr(lpAppName, L"WindowsTerminal.exe") != nullptr)
     {
         // Call DetourCreateProcessWithDllExW instead!
-        BOOL result =  DetourCreateProcessWithDllExW(
+        BOOL result = DetourCreateProcessWithDllExW(
             lpAppName, lpCmdLine, lpProcAttr, lpThreadAttr, bInherit, dwFlags | CREATE_SUSPENDED,
             lpEnv, lpCurDir, lpStartupInfo, lpProcInfo, g_hookDllPath.c_str(), Real_CreateProcessW);
-
-        result = ResumeThread(lpProcInfo->hThread);
+            result = ResumeThread(lpProcInfo->hThread);
         return result;
     }
     // Otherwise, normal behavior
-    return Real_CreateProcessW(lpAppName, lpCmdLine, lpProcAttr, lpThreadAttr,
-        bInherit, dwFlags, lpEnv, lpCurDir, lpStartupInfo, lpProcInfo);
+    BOOL result = Real_CreateProcessW(lpAppName, lpCmdLine, lpProcAttr, lpThreadAttr,
+        bInherit, dwFlags | CREATE_SUSPENDED, lpEnv, lpCurDir, lpStartupInfo, lpProcInfo);
+    result = ResumeThread(lpProcInfo->hThread);
+    return result;
 }
 
 //--------------------------------------------------------------------------
