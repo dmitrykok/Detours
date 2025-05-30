@@ -8,6 +8,7 @@
 #include <shlobj.h>          // SHGetFolderPathW
 #include <winternl.h>        // NtCreateFile, UNICODE_STRING
 #include <string>
+#include <string_view>
 #include <vector>
 #include <filesystem>
 #include <condition_variable>
